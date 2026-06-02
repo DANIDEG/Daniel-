@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>عبد الرزاق دغول</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Tajawal:wght@300;400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --accent: #c8a96e;
+      --accent2: #e8c98e;
+      --text: #f0ece4;
+      --muted: #7a7570;
+      --border: #2a2620;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* noise */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.35;
+    }
+
+    /* grid bg */
+    .bg-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(200,169,110,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,169,110,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+      pointer-events: none;
+    }
+
+    /* glow */
+    .bg-glow {
+      position: fixed;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(200,169,110,0.1) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    /* lang toggle */
+    .lang-toggle {
+      position: fixed;
+      top: 1.5rem; left: 2rem;
+      z-index: 1000;
+      display: flex; gap: 0.3rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: 0.25rem;
+      backdrop-filter: blur(10px);
+    }
+    .lang-btn {
+      padding: 0.35rem 0.9rem;
+      border-radius: 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      transition: all 0.3s;
+    }
+    .lang-btn.active { background: var(--accent); color: #0a0a0a; font-weight: 700; }
+
+    /* main card */
+    .card {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem;
+      animation: fadeUp 1s ease both;
+      max-width: 520px;
+      width: 100%;
+    }
+
+    .tag {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+      border: 1px solid rgba(200,169,110,0.3);
+      padding: 0.3rem 1rem;
+      border-radius: 2rem;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      line-height: 1;
+      margin-bottom: 0.6rem;
+    }
+    .name-ar {
+      display: block;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 9vw, 5.5rem);
+      letter-spacing: -0.01em;
+    }
+    .name-en {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(1.2rem, 4vw, 2rem);
+      color: var(--accent);
+      margin-top: 0.4rem;
+      letter-spacing: 0.04em;
+    }
+
+    .divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
+      margin: 2rem auto;
+    }
+
+    /* social links */
+    .socials {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      align-items: center;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 320px;
+      padding: 0.85rem 1.4rem;
+      border: 1px solid var(--border);
+      border-radius: 0.6rem;
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(6px);
+      transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+      font-size: 0.92rem;
+    }
+    .social-link:hover {
+      border-color: rgba(200,169,110,0.5);
+      background: rgba(200,169,110,0.06);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      color: var(--accent2);
+    }
+    .social-icon {
+      width: 36px; height: 36px;
+      border-radius: 0.4rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .social-icon.fb   { background: rgba(24,119,242,0.15); }
+    .social-icon.ig   { background: rgba(225,48,108,0.15); }
+    .social-icon.mail { background: rgba(200,169,110,0.15); }
+
+    .social-label { font-weight: 600; flex: 1; text-align: right; }
+    html.ltr .social-label { text-align: left; }
+
+    .social-handle {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* footer */
+    .footer {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%; transform: translateX(-50%);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    /* animations */
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* language classes */
+    .ar { display: inline; }
+    .en { display: none; }
+    html.ltr .ar { display: none; }
+    html.ltr .en { display: inline; }
+    html.ltr { direction: ltr; }
+    html.ltr body { font-family: 'Playfair Display', serif; }
+
+    @media (max-width: 480px) {
+      .card { padding: 2rem 1.2rem; }
+      .social-link { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <!-- Language Toggle -->
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-ar">AR</button>
+    <button class="lang-btn" id="btn-en">EN</button>
+  </div>
+
+  <div class="card">
+    <!-- Tag -->
+    <div class="tag">✦ <span class="ar">ملف شخصي</span><span class="en">Personal Card</span> ✦</div>
+
+    <!-- Name -->
+    <h1>
+      <span class="name-ar ar">عبد الرزاق دغول</span>
+      <span class="name-ar en" style="font-family:'Tajawal',sans-serif;font-style:normal;">DEGHOUL</span>
+      <span class="name-en ar">DEGHOUL ABDERRAZAK</span>
+      <span class="name-en en">ABDERRAZAK</span>
+    </h1>
+
+    <div class="divider"></div>
+
+    <!-- Social Links -->
+    <div class="socials">
+
+      <a href="https://www.facebook.com/bdalrzaq.626933" target="_blank" rel="noopener" class="social-link">
+        <div class="social-icon fb">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.234 2.686.234v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+        </div>
+        <span class="social-label"><span class="ar">فايسبوك</span><span class="en">Facebook</span></span>
+        <span class="social-handle">@bdalrzaq</span>
+      </a>
+
+      <a href="https://www.instagram.com/dnl.deg?igsh=MzRhYjJ1YW5xOTVp" target="_blank" rel="noopener" class="social-link">
+        <div class="social-icon ig">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="url(#ig)"><defs><linearGradient id="ig" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </div>
+        <span class="social-label"><span class="ar">انستغرام</span><span class="en">Instagram</span></span>
+        <span class="social-handle">@dnl.deg</span>
+      </a>
+
+      <a href="mailto:abderrazakdeghoul1@gmail.com" class="social-link">
+        <div class="social-icon mail">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8a96e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <span class="social-label"><span class="ar">البريد الإلكتروني</span><span class="en">Email</span></span>
+        <span class="social-handle">abderrazakdeghoul1</span>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="footer">✦ DEGHOUL ABDERRAZAK ✦</div>
+
+  <script>
+    const html = document.documentElement;
+    document.getElementById('btn-ar').addEventListener('click', () => {
+      html.classList.remove('ltr');
+      html.lang = 'ar'; html.dir = 'rtl';
+      document.getElementById('btn-ar').classList.add('active');
+      document.getElementById('btn-en').classList.remove('active');
+    });
+    document.getElementById('btn-en').addEventListener('click', () => {
+      html.classList.add('ltr');
+      html.lang = 'en'; html.dir = 'ltr';
+      document.getElementById('btn-en').classList.add('active');
+      document.getElementById('btn-ar').classList.remove('active');
+    });
+  </script>
+</body>
+</html>
